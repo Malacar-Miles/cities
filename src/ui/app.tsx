@@ -30,8 +30,8 @@ function App() {
   };
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center">
-      <main className="w-[576px]">
+    <div className="w-screen h-screen flex justify-center items-center bg-gray-200">
+      <main className="w-full h-full bg-white flex flex-shrink-0 flex-col sm:w-[576px] sm:h-auto sm:rounded-2xl sm:shadow">
         <CurrentPage />
       </main>
     </div>

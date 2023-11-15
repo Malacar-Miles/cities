@@ -7,13 +7,13 @@ const ChatHistoryItem = ({
   type: ChatHistoryItemType;
   children: React.ReactNode;
 }) => {
-  let style = "flex py-1.5 px-4";
+  let style = "flex py-1.5 px-4 rounded-xl";
   switch (type) {
     case "ai-message":
-      style += " text-gray-700 bg-violet-50";
+      style += " text-gray-700 bg-violet-50 self-start rounded-bl-none";
       break;
     case "player-message":
-      style += " text-white bg-violet-500";
+      style += " text-white bg-violet-500 self-end rounded-br-none";
       break;
     case "hint":
       style += " text-gray-400";

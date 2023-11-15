@@ -19,7 +19,7 @@ const ChatInputBox = ({
   };
 
   const submitInput = () => {
-    if (gameState === "ai-turn") return;
+    if (gameState === "ai-turn" || !inputBoxContent.trim()) return;
     addPlayerInput(inputBoxContent);
     setInputBoxContent("");
   };
@@ -35,17 +35,20 @@ const ChatInputBox = ({
       ? "Ожидаем ответа соперника..."
       : `Знаете город на букву "${currentLetter.toUpperCase()}"?`;
 
+  const isInactive = gameState === "ai-turn";
+
   return (
-    <div className="w-full h-12 shrink-0 flex items-center p-3 gap-3 rounded-md text-gray-700 bg-gray-100">
+    <div className="m-4 h-12 justify-self-end shrink-0 flex items-center p-3 gap-3 rounded-md text-gray-700 bg-gray-100">
       <input
         type="text"
         placeholder={placeholderText}
         value={inputBoxContent}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
+        readOnly={isInactive}
         className="grow bg-transparent outline-none"
       ></input>
-      <Button type="small" onClick={submitInput}>
+      <Button type="small" onClick={submitInput} isInactive={isInactive}>
         <SendIcon />
       </Button>
     </div>

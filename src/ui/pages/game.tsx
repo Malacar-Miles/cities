@@ -18,7 +18,7 @@ const Game = ({ gameData }: { gameData: GameDataAndControls }) => {
 
   return (
     <div>
-      <h2>{headerText}</h2>
+      <h2 className="p-4">{headerText}</h2>
       <hr />
       <ChatHistoryBox chatHistory={chatHistory} />
       <ChatInputBox

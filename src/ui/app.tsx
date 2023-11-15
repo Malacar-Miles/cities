@@ -1,10 +1,12 @@
 import Intro from "./pages/intro";
 import Game from "./pages/game";
 import { useGameLogic } from "../model/game-logic";
+import EndgameScreen from "./pages/endgame";
 
 function App() {
   const gameData = useGameLogic();
-  const { gameState } = gameData;
+  const { gameState, getUsedCitiesAmount, getLastUsedCity, startNewGame } =
+    gameData;
 
   const CurrentPage = () => {
     if (gameState === "intro")
@@ -15,6 +17,15 @@ function App() {
       gameState === "player-turn"
     )
       return <Game gameData={gameData} />;
+    if (gameState === "win" || gameState === "lose")
+      return (
+        <EndgameScreen
+          gameState={gameState}
+          getUsedCitiesAmount={getUsedCitiesAmount}
+          getLastUsedCity={getLastUsedCity}
+          startNewGame={startNewGame}
+        />
+      );
     throw new Error(`Invalid game state: "${gameState}"`);
   };
 

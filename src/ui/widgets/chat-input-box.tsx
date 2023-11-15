@@ -18,9 +18,14 @@ const ChatInputBox = ({
     setInputBoxContent((event.target as HTMLInputElement).value);
   };
 
-  const handleButtonClick = () => {
+  const submitInput = () => {
+    if (gameState === "ai-turn") return;
     addPlayerInput(inputBoxContent);
     setInputBoxContent("");
+  };
+
+  const handleKeyDown = (event: any) => {
+    if (event.key === "Enter") submitInput();
   };
 
   const placeholderText =
@@ -28,7 +33,7 @@ const ChatInputBox = ({
       ? "Напишите любой город, например: где вы живете?"
       : gameState === "ai-turn"
       ? "Ожидаем ответа соперника..."
-      : `Знаете город на букву "${currentLetter}"?`;
+      : `Знаете город на букву "${currentLetter.toUpperCase()}"?`;
 
   return (
     <div className="w-full h-12 shrink-0 flex items-center p-3 gap-3 rounded-md text-gray-700 bg-gray-100">
@@ -37,9 +42,10 @@ const ChatInputBox = ({
         placeholder={placeholderText}
         value={inputBoxContent}
         onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
         className="grow bg-transparent outline-none"
       ></input>
-      <Button type="small" onClick={handleButtonClick}>
+      <Button type="small" onClick={submitInput}>
         <SendIcon />
       </Button>
     </div>

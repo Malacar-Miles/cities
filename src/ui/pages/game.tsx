@@ -10,9 +10,15 @@ const Game = ({ gameData }: { gameData: GameDataAndControls }) => {
     getUsedCitiesAmount,
     addPlayerInput,
   } = gameData;
+
+  const headerText =
+    gameState !== "ai-turn"
+      ? "Сейчас ваша очередь"
+      : "Сейчас очередь соперника";
+
   return (
     <div>
-      <h2>Сейчас ваша очередь</h2>
+      <h2>{headerText}</h2>
       <hr />
       <ChatHistoryBox chatHistory={chatHistory} />
       <ChatInputBox

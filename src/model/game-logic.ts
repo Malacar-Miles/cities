@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   getLastLetter,
   validateCity,
@@ -31,20 +31,34 @@ export const useGameLogic = () => {
   const [usedCities, setUsedCities] = useState<string[]>([]);
 
   const getUsedCitiesAmount = () => usedCities.length;
+  const getLastUsedCity = () => usedCities[usedCities.length - 1];
 
   const clearChatHistory = () => setChatHistory([]);
 
-  const addChatHistoryItem = (chatHistoryItem: ChatHistoryItem) => {
+  const addAiMessageToChat = (message: string) => {
     const newChatHistory = [...chatHistory];
-    newChatHistory.push(chatHistoryItem);
+    newChatHistory.push({
+      type: "ai-message",
+      content: message,
+    });
     setChatHistory(newChatHistory);
   };
 
-  const addErrorMessageToChat = (message: string) => {
-    addChatHistoryItem({
-      type: "hint",
-      content: message,
+  const addPlayerMessageToChat = (
+    playerMessage: string,
+    errorMessage?: string
+  ) => {
+    const newChatHistory = [...chatHistory];
+    newChatHistory.push({
+      type: "player-message",
+      content: playerMessage,
     });
+    if (errorMessage)
+      newChatHistory.push({
+        type: "hint",
+        content: errorMessage,
+      });
+    setChatHistory(newChatHistory);
   };
 
   const addUsedCity = (city: string) => {
@@ -70,34 +84,34 @@ export const useGameLogic = () => {
     // Remove leading and trailing whitespaces from playerInput
     playerInput = playerInput.trim();
 
-    // Add player input to chat, even if it's invalid
-    addChatHistoryItem({
-      type: "player-message",
-      content: playerInput,
-    });
-
-    // Check for any possible player error. If an error is found, output a message in chat.
+    // Check for any possible player error. If an error is found, put player
+    // message in chat, followed by the error message.
     if (
       gameState !== "first-turn" &&
       !checkIfInputStartsWithLetter(playerInput, currentLetter)
     ) {
-      addErrorMessageToChat(
+      addPlayerMessageToChat(
+        playerInput,
         `Это слово не начинается на букву "${currentLetter.toUpperCase()}"`
       );
       return;
     }
     if (!validateCity(playerInput)) {
-      addErrorMessageToChat("В нашей базе данных нет города с таким названием");
+      addPlayerMessageToChat(
+        playerInput,
+        "В нашей базе данных нет города с таким названием"
+      );
       return;
     }
     if (checkIfCityWasUsed(playerInput, usedCities)) {
-      addErrorMessageToChat("Этот город уже был назван");
+      addPlayerMessageToChat(playerInput, "Этот город уже был назван");
       return;
     }
 
-    // Now that we know that the input is valid, update the game logic to start the AI turn.
+    // Now that we know that the input is valid, put player message in chat,
+    // update the game logic to start the AI turn.
+    addPlayerMessageToChat(playerInput);
     const lastLetter = getLastLetter(playerInput) as string;
-    console.log(lastLetter);
     setCurrentLetter(lastLetter);
     addUsedCity(playerInput);
     initiateAiTurn();
@@ -106,45 +120,50 @@ export const useGameLogic = () => {
   const initiateAiTurn = () => {
     setGameState("ai-turn");
     console.log("initiateAiTurn");
-    console.log(currentLetter);
-
-    const aiResponse = () => {
-      console.log("aiResponse");
-      // Get all cities starting with the current letter
-      const validCities = getAllCitiesStartingWithLetter(currentLetter);
-
-      // In the resulting array, find the first city that hasn't been used yet
-      const response = validCities.find(
-        (city) => !checkIfCityWasUsed(city, usedCities)
-      );
-
-      // If a response was found, output it into chat and initiate player turn
-      if (response) {
-        console.log(response);
-        addChatHistoryItem({
-          type: "ai-message",
-          content: response,
-        });
-        setCurrentLetter(getLastLetter(response) as string);
-        addUsedCity(response);
-        initiatePlayerTurn();
-      }
-
-      // If the AI failed to find a valid response, initiate the "win" state
-      setGameState("win");
-      console.log("win");
-    };
-
-    // Wait for a random delay between 5 and 10 seconds
-    // and then execute aiResponse
-    const randomDelay = (Math.random() + 1) * 5000;
-    setTimeout(aiResponse, randomDelay);
   };
 
   const initiatePlayerTurn = () => {
     console.log("initiatePlayerTurn");
     setGameState("player-turn");
   };
+
+  useEffect(() => {
+    // We have to use useEffect for this code in order to
+    // avoid the issue where it executes before currentValue and
+    // usedCities get updated with new values.
+    if (gameState === "ai-turn") {
+      console.log(usedCities);
+
+      const aiResponse = () => {
+        console.log("aiResponse");
+        // Get all cities starting with the current letter
+        const validCities = getAllCitiesStartingWithLetter(currentLetter);
+
+        // In the resulting array, find the first city that hasn't been used yet
+        const response = validCities.find(
+          (city) => !checkIfCityWasUsed(city, usedCities)
+        );
+
+        // If a response was found, output it into chat and initiate player turn
+        if (response) {
+          console.log(response);
+          addAiMessageToChat(response);
+          setCurrentLetter(getLastLetter(response) as string);
+          addUsedCity(response);
+          initiatePlayerTurn();
+        } else {
+          // If the AI failed to find a valid response, initiate the "win" state
+          setGameState("win");
+          console.log("win");
+        }
+      };
+
+      // Wait for a random delay between 3 and 6 seconds
+      // and then execute aiResponse
+      const randomDelay = (Math.random() + 1) * 3000;
+      setTimeout(aiResponse, randomDelay);
+    }
+  }, [gameState]);
 
   // Return an object that contains the data and functions
   // that will be used by UI components.
@@ -155,6 +174,7 @@ export const useGameLogic = () => {
     getUsedCitiesAmount,
     startNewGame,
     addPlayerInput,
+    getLastUsedCity,
   };
 };
 

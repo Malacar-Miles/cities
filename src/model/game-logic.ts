@@ -15,9 +15,11 @@ export type GameState =
   | "win"
   | "lose";
 
+export type ChatHistoryItemType = "player-message" | "ai-message" | "hint";
+
 export type ChatHistoryItem = {
   content: string;
-  type: "player-message" | "ai-message" | "hint";
+  type: ChatHistoryItemType;
 };
 
 export type ChatHistory = ChatHistoryItem[];
@@ -52,6 +54,7 @@ export const useGameLogic = () => {
   };
 
   const startNewGame = () => {
+    console.log("startNewGame");
     clearChatHistory();
     setGameState("first-turn");
     setCurrentLetter("");
@@ -93,15 +96,20 @@ export const useGameLogic = () => {
     }
 
     // Now that we know that the input is valid, update the game logic to start the AI turn.
-    setCurrentLetter(getLastLetter(playerInput) as string);
+    const lastLetter = getLastLetter(playerInput) as string;
+    console.log(lastLetter);
+    setCurrentLetter(lastLetter);
     addUsedCity(playerInput);
     initiateAiTurn();
   };
 
   const initiateAiTurn = () => {
     setGameState("ai-turn");
+    console.log("initiateAiTurn");
+    console.log(currentLetter);
 
     const aiResponse = () => {
+      console.log("aiResponse");
       // Get all cities starting with the current letter
       const validCities = getAllCitiesStartingWithLetter(currentLetter);
 
@@ -110,8 +118,9 @@ export const useGameLogic = () => {
         (city) => !checkIfCityWasUsed(city, usedCities)
       );
 
-      // If the response was found, output it into chat and initiate player turn
+      // If a response was found, output it into chat and initiate player turn
       if (response) {
+        console.log(response);
         addChatHistoryItem({
           type: "ai-message",
           content: response,
@@ -123,6 +132,7 @@ export const useGameLogic = () => {
 
       // If the AI failed to find a valid response, initiate the "win" state
       setGameState("win");
+      console.log("win");
     };
 
     // Wait for a random delay between 5 and 10 seconds
@@ -132,18 +142,19 @@ export const useGameLogic = () => {
   };
 
   const initiatePlayerTurn = () => {
+    console.log("initiatePlayerTurn");
     setGameState("player-turn");
   };
 
-  // Return the object that contains the data and functions
+  // Return an object that contains the data and functions
   // that will be used by UI components.
   return {
-    gameState: gameState,
-    chatHistory: chatHistory,
-    currentLetter: currentLetter,
-    getUsedCitiesAmount: getUsedCitiesAmount,
-    startNewGame: startNewGame,
-    addPlayerInput: addPlayerInput,
+    gameState,
+    chatHistory,
+    currentLetter,
+    getUsedCitiesAmount,
+    startNewGame,
+    addPlayerInput,
   };
 };
 

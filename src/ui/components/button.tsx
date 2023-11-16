@@ -3,17 +3,20 @@ const Button = ({
   isInactive = false,
   onClick,
   children,
+  className,
 }: {
   type: "normal" | "small";
   isInactive?: boolean;
   onClick?: () => void;
   children: React.ReactNode;
+  className?: string;
 }) => {
   const handleClick = () => {
     if (!isInactive && onClick) onClick();
   };
 
   let style = "flex items-center text-white";
+  if (className) style += " " + className;
 
   switch (type) {
     case "normal":

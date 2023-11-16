@@ -6,6 +6,7 @@ import {
   checkIfInputStartsWithLetter,
   getAllCitiesStartingWithLetter,
 } from "./helper-functions";
+import { useTimer } from "./timer";
 
 export type GameState =
   | "intro"
@@ -29,6 +30,14 @@ export const useGameLogic = () => {
   const [chatHistory, setChatHistory] = useState<ChatHistory>([]);
   const [currentLetter, setCurrentLetter] = useState("");
   const [usedCities, setUsedCities] = useState<string[]>([]);
+
+  const {
+    startTimer,
+    stopTimer,
+    resetTimer,
+    checkIfTimerExpired,
+    getFormattedTime,
+  } = useTimer();
 
   const getUsedCitiesAmount = () => usedCities.length;
   const getLastUsedCity = () => usedCities[usedCities.length - 1];
@@ -69,7 +78,9 @@ export const useGameLogic = () => {
 
   const startNewGame = () => {
     console.log("startNewGame");
+    resetTimer();
     clearChatHistory();
+    setUsedCities([]);
     setGameState("first-turn");
     setCurrentLetter("");
   };
@@ -132,8 +143,6 @@ export const useGameLogic = () => {
     // avoid the issue where it executes before currentValue and
     // usedCities get updated with new values.
     if (gameState === "ai-turn") {
-      console.log(usedCities);
-
       const aiResponse = () => {
         console.log("aiResponse");
         // Get all cities starting with the current letter
@@ -154,6 +163,7 @@ export const useGameLogic = () => {
         } else {
           // If the AI failed to find a valid response, initiate the "win" state
           setGameState("win");
+          stopTimer();
           console.log("win");
         }
       };
@@ -165,6 +175,30 @@ export const useGameLogic = () => {
     }
   }, [gameState]);
 
+  useEffect(() => {
+    // If a new player turn or UI turn just started,
+    // create a new timer
+    if (
+      gameState === "ai-turn" ||
+      gameState === "first-turn" ||
+      gameState === "player-turn"
+    ) {
+      startTimer();
+      console.log("startTimer");
+    }
+  }, [gameState]);
+
+  useEffect(() => {
+    // Whenever formattedTime updates, check if the timer has expired,
+    // and if it's the player's turn, trigger the "lose" state.
+    if (
+      (gameState === "first-turn" || gameState === "player-turn") &&
+      checkIfTimerExpired()
+    ) {
+      setGameState("lose");
+    }
+  }, [getFormattedTime()]);
+
   // Return an object that contains the data and functions
   // that will be used by UI components.
   return {
@@ -175,6 +209,7 @@ export const useGameLogic = () => {
     startNewGame,
     addPlayerInput,
     getLastUsedCity,
+    getFormattedTime,
   };
 };
 

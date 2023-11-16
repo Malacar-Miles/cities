@@ -17,9 +17,14 @@ const EndgameScreen = ({
       ? "Поздравляем тебя с победой!\nТвой противник не вспомнил нужный город!"
       : "К сожалению, твое время вышло!\nТвой противник победил!";
 
+  const timerStyle =
+    "text-3xl font-medium " +
+    (gameState === "win" ? "text-green-600" : "text-red-600");
+
   return (
     <div className="w-full p-10 flex flex-col gap-8 items-center whitespace-pre-wrap text-center text-xl">
       <h2>{headerText}</h2>
+      <span className={timerStyle}>00:00</span>
       <p>
         Всего было перечислено городов: {getUsedCitiesAmount()}
         {"\n"}Очень неплохой результат!

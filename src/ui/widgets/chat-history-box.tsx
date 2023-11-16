@@ -22,7 +22,6 @@ const ChatHistoryBox = ({ chatHistory }: { chatHistory: ChatHistory }) => {
             {chatHistoryItem.content}
           </ChatHistoryItem>
         ))}
-        <div ref={ref} />
       </div>
     ) : (
       <div className="w-full h-full flex justify-center items-center">
@@ -33,8 +32,9 @@ const ChatHistoryBox = ({ chatHistory }: { chatHistory: ChatHistory }) => {
     );
 
   return (
-    <div className="w-full sm:h-[410px] gap-2 p-4 py-0 overflow-y-auto no-scrollbar">
+    <div className="w-full h-full sm:h-[410px] gap-2 p-4 py-0 overflow-y-auto no-scrollbar">
       <InnerContent />
+      <div ref={ref} />
     </div>
   );
 };

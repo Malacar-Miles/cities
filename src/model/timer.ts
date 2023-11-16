@@ -4,7 +4,6 @@ import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 
 const TIMER_OFFSET = 120; // Time in seconds
-const UPDATE_INTERVAL = 1000; // Time in milliseconds
 
 const createTimer = () => {
   const startTime = dayjs();
@@ -55,16 +54,14 @@ export const useTimer = () => {
   const initializeTimer = () => {
     if (!isRunning || !timer) return;
 
-    // Run this function every second
-    const timerUpdater = setInterval(() => {
+    const update = () => {
       if (checkIfTimerExpired()) {
         stopTimer();
-        clearInterval(timerUpdater);
+      } else {
+        requestAnimationFrame(update);
       }
-    }, UPDATE_INTERVAL);
-    return () => {
-      clearInterval(timerUpdater);
     };
+    update();
   };
   // eslint-disable-next-line
   useEffect(initializeTimer, [isRunning]);

@@ -1,6 +1,7 @@
 import ChatHistoryBox from "../widgets/chat-history-box";
 import ChatInputBox from "../widgets/chat-input-box";
 import TimerDisplay from "../components/timer-display";
+import TimerBar from "../components/timer-bar";
 import type { GameDataAndControls } from "../../model/game-logic";
 
 const Game = ({ gameData }: { gameData: GameDataAndControls }) => {
@@ -11,6 +12,7 @@ const Game = ({ gameData }: { gameData: GameDataAndControls }) => {
     getUsedCitiesAmount,
     addPlayerInput,
     getFormattedTime,
+    getTimerPercentage,
   } = gameData;
 
   const headerText =
@@ -26,7 +28,7 @@ const Game = ({ gameData }: { gameData: GameDataAndControls }) => {
         <h2>{headerText}</h2>
         <TimerDisplay getFormattedTime={getFormattedTime} />
       </header>
-      <hr />
+      <TimerBar getTimerPercentage={getTimerPercentage} />
       <ChatHistoryBox chatHistory={chatHistory} />
       <p className="text-sm text-gray-400 text-center">
         {" "}

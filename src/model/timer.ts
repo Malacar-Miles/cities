@@ -43,6 +43,15 @@ export const useTimer = () => {
     return remainingDuration.format("mm:ss");
   };
 
+  const getTimerPercentage = () => {
+    // Returns the percentage of remaining time,
+    // to be used with the timer bar indicator
+    if (!timer) return 100;
+    const remainingSeconds = timer.endTime.diff(dayjs(), "second");
+    if (remainingSeconds < 0) return 0;
+    return Math.round(100 * remainingSeconds / TIMER_OFFSET);
+  };
+
   const initializeTimer = () => {
     if (!isRunning || !timer) return;
 
@@ -57,7 +66,7 @@ export const useTimer = () => {
       clearInterval(timerUpdater);
     };
   };
-
+  // eslint-disable-next-line
   useEffect(initializeTimer, [isRunning]);
 
   return {
@@ -66,5 +75,6 @@ export const useTimer = () => {
     resetTimer,
     checkIfTimerExpired,
     getFormattedTime,
+    getTimerPercentage,
   };
 };

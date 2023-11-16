@@ -37,6 +37,7 @@ export const useGameLogic = () => {
     resetTimer,
     checkIfTimerExpired,
     getFormattedTime,
+    getTimerPercentage,
   } = useTimer();
 
   const getUsedCitiesAmount = () => usedCities.length;
@@ -173,6 +174,7 @@ export const useGameLogic = () => {
       const randomDelay = (Math.random() + 1) * 3000;
       setTimeout(aiResponse, randomDelay);
     }
+    // eslint-disable-next-line
   }, [gameState]);
 
   useEffect(() => {
@@ -186,10 +188,12 @@ export const useGameLogic = () => {
       startTimer();
       console.log("startTimer");
     }
+    // eslint-disable-next-line
   }, [gameState]);
 
+  // eslint-disable-next-line
   useEffect(() => {
-    // Whenever formattedTime updates, check if the timer has expired,
+    // Whenever this hook updates, check if the timer has expired,
     // and if it's the player's turn, trigger the "lose" state.
     if (
       (gameState === "first-turn" || gameState === "player-turn") &&
@@ -197,7 +201,7 @@ export const useGameLogic = () => {
     ) {
       setGameState("lose");
     }
-  }, [getFormattedTime()]);
+  });
 
   // Return an object that contains the data and functions
   // that will be used by UI components.
@@ -210,6 +214,7 @@ export const useGameLogic = () => {
     addPlayerInput,
     getLastUsedCity,
     getFormattedTime,
+    getTimerPercentage,
   };
 };
 

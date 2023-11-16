@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const REFRESH_INTERVAL = 1000 // Display refresh timer in milliseconds
+const REFRESH_INTERVAL = 200 // Display refresh timer in milliseconds
 const DEFAULT_DISPLAY_VALUE = "2:00";
 
 const TimerDisplay = ({
@@ -18,6 +18,7 @@ const TimerDisplay = ({
       setTimerDisplay(getFormattedTime() || DEFAULT_DISPLAY_VALUE);
     }, REFRESH_INTERVAL);
     return () => clearInterval(displayUpdater);
+    // eslint-disable-next-line
   }, []);
 
   return (

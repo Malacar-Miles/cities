@@ -38,6 +38,7 @@ export const useGameLogic = () => {
     checkIfTimerExpired,
     getFormattedTime,
     getTimerPercentage,
+    stateUpdateTrigger
   } = useTimer();
 
   const getUsedCitiesAmount = () => usedCities.length;
@@ -189,7 +190,7 @@ export const useGameLogic = () => {
       console.log("startTimer");
     }
     // eslint-disable-next-line
-  }, [gameState]);
+  }, [gameState, stateUpdateTrigger]);
 
   // eslint-disable-next-line
   useEffect(() => {

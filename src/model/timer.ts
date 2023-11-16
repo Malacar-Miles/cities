@@ -4,6 +4,7 @@ import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 
 const TIMER_OFFSET = 120; // Time in seconds
+const UPDATE_INTERVAL = 200; // Time in milliseconds
 
 const createTimer = () => {
   const startTime = dayjs();
@@ -16,6 +17,15 @@ type Timer = ReturnType<typeof createTimer>;
 export const useTimer = () => {
   const [timer, setTimer] = useState<Timer | null>(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [stateUpdateTrigger, setStateUpdateTrigger] = useState(false);
+
+  const triggerStateUpdate = () => {
+    // This function get spammed when timer expires
+    // It is a failsafe to fix an issue where timer expiration
+    // doesn't trigger game state update reliably
+    setStateUpdateTrigger(!stateUpdateTrigger);
+    console.log("Timer fail trigger");
+  };
 
   const startTimer = () => {
     const newTimer = createTimer();
@@ -54,14 +64,16 @@ export const useTimer = () => {
   const initializeTimer = () => {
     if (!isRunning || !timer) return;
 
-    const update = () => {
+    // Run this function periodically
+    const timerUpdater = setInterval(() => {
       if (checkIfTimerExpired()) {
         stopTimer();
-      } else {
-        requestAnimationFrame(update);
+        triggerStateUpdate();
       }
+    }, UPDATE_INTERVAL);
+    return () => {
+      clearInterval(timerUpdater);
     };
-    update();
   };
   // eslint-disable-next-line
   useEffect(initializeTimer, [isRunning]);
@@ -73,5 +85,6 @@ export const useTimer = () => {
     checkIfTimerExpired,
     getFormattedTime,
     getTimerPercentage,
+    stateUpdateTrigger
   };
 };

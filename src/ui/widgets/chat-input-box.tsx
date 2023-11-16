@@ -38,7 +38,7 @@ const ChatInputBox = ({
   const isInactive = gameState === "ai-turn";
 
   return (
-    <div className="h-12 justify-self-end shrink-0 flex items-center p-3 gap-3 rounded-md text-gray-700 bg-gray-100">
+    <div className="h-12 p-4 justify-self-end shrink-0 flex items-center gap-3 rounded-md text-gray-700 bg-gray-100">
       <input
         type="text"
         autoFocus

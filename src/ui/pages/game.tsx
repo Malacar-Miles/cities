@@ -34,8 +34,8 @@ const Game = ({ gameData }: { gameData: GameDataAndControls }) => {
       </header>
       <TimerBar getTimerPercentage={getTimerPercentage} />
       <ChatHistoryBox chatHistory={chatHistory} />
-      <div className="w-full sm:w-[576px] h-[100px] p-4 absolute left-0 bottom-0">
-        <p className="text-sm text-gray-400 text-center">
+      <div className="w-full sm:w-[576px] h-[100px] p-4 pt-0 absolute left-0 bottom-0">
+        <p className="text-sm text-gray-400 text-center mb-4">
           &zwnj;
           {citiesAmount > 0 && `Всего перечислено городов: ${citiesAmount}`}
         </p>

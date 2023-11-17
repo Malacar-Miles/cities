@@ -28,12 +28,14 @@ const Game = ({ gameData }: { gameData: GameDataAndControls }) => {
     // which is required for scrolling to work, and at the same time keep my input
     // box "glued" to the bottom of the screen.
     <div className="flex flex-col w-full h-full relative pb-[100px]">
-      <header className="p-4 flex justify-between">
-        <h2>{headerText}</h2>
-        <TimerDisplay getFormattedTime={getFormattedTime} />
+      <header className="w-full bg-white max-sm:mobile-fixed">
+        <div className="w-full p-4 flex justify-between">
+          <h2>{headerText}</h2>
+          <TimerDisplay getFormattedTime={getFormattedTime} />
+        </div>
+        <TimerBar getTimerPercentage={getTimerPercentage} />
       </header>
-      <TimerBar getTimerPercentage={getTimerPercentage} />
-      <ChatHistoryBox chatHistory={chatHistory} />
+      <ChatHistoryBox chatHistory={chatHistory} addedStyle="max-sm:mt-16" />
       <div className="w-full sm:w-[576px] h-[100px] p-4 pt-0 absolute left-0 bottom-0">
         <p className="text-sm text-gray-400 text-center mb-4">
           &zwnj;

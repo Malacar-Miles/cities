@@ -14,17 +14,17 @@ const createTimer = () => {
 
 type Timer = ReturnType<typeof createTimer>;
 
-export const useTimer = () => {
+export const useTimer = ({onTimerExpire}: {onTimerExpire: () => any}) => {
   const [timer, setTimer] = useState<Timer | null>(null);
   const [isRunning, setIsRunning] = useState(false);
-  const [stateUpdateTrigger, setStateUpdateTrigger] = useState(false);
 
   const triggerStateUpdate = () => {
     // This function get spammed when timer expires
     // It is a failsafe to fix an issue where timer expiration
     // doesn't trigger game state update reliably
-    setStateUpdateTrigger(!stateUpdateTrigger);
-    console.log("Timer fail trigger");
+    onTimerExpire();
+    setIsRunning(false);
+    console.log("timer expire triggered");
   };
 
   const startTimer = () => {
@@ -85,6 +85,5 @@ export const useTimer = () => {
     checkIfTimerExpired,
     getFormattedTime,
     getTimerPercentage,
-    stateUpdateTrigger
   };
 };

@@ -31,15 +31,22 @@ export const useGameLogic = () => {
   const [currentLetter, setCurrentLetter] = useState("");
   const [usedCities, setUsedCities] = useState<string[]>([]);
 
+  const onTimerExpire = () => {
+    if (gameState === "first-turn" || gameState === "player-turn") {
+      setGameState("lose");
+    } else
+      console.log(
+        `Warning: timer should never expire when gameState is ${gameState}`
+      );
+  };
+
   const {
     startTimer,
     stopTimer,
     resetTimer,
-    checkIfTimerExpired,
     getFormattedTime,
     getTimerPercentage,
-    stateUpdateTrigger
-  } = useTimer();
+  } = useTimer({ onTimerExpire });
 
   const getUsedCitiesAmount = () => usedCities.length;
   const getLastUsedCity = () => usedCities[usedCities.length - 1];
@@ -190,19 +197,7 @@ export const useGameLogic = () => {
       console.log("startTimer");
     }
     // eslint-disable-next-line
-  }, [gameState, stateUpdateTrigger]);
-
-  // eslint-disable-next-line
-  useEffect(() => {
-    // Whenever this hook updates, check if the timer has expired,
-    // and if it's the player's turn, trigger the "lose" state.
-    if (
-      (gameState === "first-turn" || gameState === "player-turn") &&
-      checkIfTimerExpired()
-    ) {
-      setGameState("lose");
-    }
-  });
+  }, [gameState]);
 
   // Return an object that contains the data and functions
   // that will be used by UI components.
